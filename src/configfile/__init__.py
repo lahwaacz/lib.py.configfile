@@ -161,11 +161,16 @@ class Section(object):
         """
         self._NAME = name
         self._PARENT = parent
+        # Move constant settings to a Settings class **************************************
         self._INHERIT_OPTIONS = inherit_options
         self._ENABLE_SUBSECTIONS = subsections
+        # Ignore case can be simplified by storing lowercased keys in the *****************
+        #  object, probably letting set the dictionary class to be used *******************
+        #  This would also simplify the use of the "ordered" options? *********************
         self._IGNORE_CASE = ignore_case
         self._RE_I = re_.I if self._IGNORE_CASE else 0
 
+        # Compile only once ***********************************************************
         self._PARSE_SECTION = '^\s*\[(.+)\]\s*$'
         self._PARSE_OPTION = '^\s*([^\=]+?)\s*\=\s*(.*?)\s*$'
         self._PARSE_COMMENT = '^\s*[#;]{1}\s*(.*?)\s*$'
@@ -328,6 +333,8 @@ class Section(object):
 
         :param str name: The name of the new subsection
         """
+        # Use this method, where possible, when creating new sections in ***************
+        #  the other methods ***********************************************************
         sub = self._EMPTY_SECTION()
         sub[1][name] = self._EMPTY_SECTION()
         self._import_object(sub, overwrite=False)
@@ -455,6 +462,7 @@ class Section(object):
             once at importing: all links among options will be lost after
             importing.
         """
+        # Also import from a multiline string or from another Section object ********************
         for source in sources:
             if source is None:
                 continue
@@ -496,6 +504,8 @@ class Section(object):
                 for lno, line in enumerate(stream):
                     # Note that the order the various types are evaluated
                     # matters!
+                    # Really? What about sorting the tests according ***********************
+                    #  to their likelihood to pass? ****************************************
 
                     if re_.match(self._PARSE_IGNORE, line, self._RE_I):
                         continue
@@ -588,6 +598,8 @@ class Section(object):
         :param bool add: Whether non-pre-existing data will be imported.
         :param bool reset: Whether pre-existing data will be cleared.
         """
+        # Add a shallow mode (do not affect subsections) ******************************************
+        # Change "reset" mode to "remove" (complementing "overwrite" and "add") *******************
         if reset:
             self._options = self._DICT_CLASS()
             self._subsections = self._DICT_CLASS()
@@ -887,6 +899,7 @@ class Section(object):
         Note that the characters in the strings are compared in lowercase, so
         there's no need to specify all casing variations of a string
         """
+        # Use default values in definition with Settings class ***************************************
         if true == ():
             true = self._GET_BOOLEAN_TRUE
         if false == ():
@@ -1033,6 +1046,8 @@ class Section(object):
         :param  bool path: If True, section names are exported with their full
             path
         """
+        # Add a shallow mode (do not affect subsections) ******************************************
+        # Change "reset" mode to "remove" (complementing "overwrite" and "add") *******************
         for f in targets:
             self._export_file(f, overwrite=overwrite, add=add, reset=reset,
                                                                     path=path)
@@ -1327,6 +1342,9 @@ class Section(object):
                 readonly_section = True
                 remaining_options = self._DICT_CLASS()
 
+        # If reset (which for all the other modes by default is "deep", i.e. ***************
+        #  it must affect the subsections too) this section and all the other **************
+        #  "old" subsections must be removed from the file *********************************
         stream.write(line)
 
         return (readonly_section, remaining_options)
@@ -1435,6 +1453,7 @@ class ConfigFile(Section):
         Possible options at the beginning of the file, before any section, are
         considered to be in the "root" section.
         """
+        # Create tests that must be passed at every release *****************************
         # The Python 3 definition was:
         #def __init__(self,
         #             *sources,

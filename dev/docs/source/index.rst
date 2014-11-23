@@ -1,6 +1,9 @@
 Welcome to ConfigFile's documentation!
 ======================================
 
+See what happens if new modules or packages are added *********************************
+Use sphinx-apidoc? ********************************************************************
+
 .. The `toctree` directive is required
 .. toctree::
    :hidden:
